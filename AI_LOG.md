@@ -36,3 +36,10 @@ This document records the prompts, tool interactions, code generation steps, and
 5. **Code Review & Bug Fixes**:
    - Identified indexing offset in `XlsxParser` which initially caused VX001 (Ananya Rao) to be skipped because of empty metadata rows. Corrected slice index to `sheet_rows[2:]`.
    - Verified 100% test pass rate (27/27 passed).
+
+6. **FastAPI Backend Development**:
+   - Developed full REST API backend with modular routers: `system`, `qa`, `risks`, `agents`, `evidence`, and `conflicts`.
+   - Added automatic database initialization and ingestion via FastAPI lifespan.
+   - Built 16 automated integration tests in `tests/test_api.py` covering health, Q&A, privacy guardrails, risk retrieval, 14-agent interview, and conflict APIs.
+   - Total automated test suite expanded to 43 passing tests.
+   - Updated CLI `run.py` to support launching the FastAPI server with `--api`.

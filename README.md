@@ -21,12 +21,20 @@ source venv/bin/activate
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Run automated test suite (27 tests)
+# 4. Run automated test suite (43 tests)
 pytest -v
 
-# 5. Launch the Streamlit CXO Cockpit
+# 5. Launch the Streamlit CXO Cockpit UI
 python run.py
+
+# 6. Or launch the FastAPI Backend API
+python run.py --api
+# Or via uvicorn directly:
+uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
+
+- **Interactive API Swagger Docs**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- **Redoc Documentation**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
 To run in terminal CLI mode:
 ```bash
@@ -37,6 +45,31 @@ To re-export populated worksheets (`Entity_Resolution.xlsx` and `Evidence_Index.
 ```bash
 python run.py --export
 ```
+
+---
+
+## 🔌 FastAPI Backend Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/` | Root API overview and documentation links |
+| `GET` | `/api/system/health` | Healthcheck and real-time database counts (sources, evidence, agents, conflicts) |
+| `GET` | `/api/system/sources` | Lists all discovered source files, content hashes, and ingestion statuses |
+| `POST` | `/api/system/ingest` | Runs the ingestion pipeline for a given release day |
+| `POST` | `/api/system/exports/generate` | Generates populated `Entity_Resolution.xlsx` and `Evidence_Index.xlsx` |
+| `POST` | `/api/qa/ask` | Executive Q&A with exact citations, privacy guardrails, and temporal boundaries |
+| `GET` | `/api/qa/audit` | Retrieves audited question history |
+| `GET` | `/api/risks` | Returns the ranked executive risk view (`as_of_date`, optional `category`) |
+| `GET` | `/api/risks/{risk_id}` | Detailed risk information and source locators |
+| `GET` | `/api/agents` | Lists the 14 interviewable colleague personas |
+| `GET` | `/api/agents/{employee_id}` | Detailed employee profile with verified facts vs unknown fields |
+| `POST` | `/api/agents/{employee_id}/interview` | Conducts evidence-grounded colleague interview |
+| `GET` | `/api/evidence` | Evidence search and retrieval with `release_date <= as_of_date` filtering |
+| `GET` | `/api/evidence/{evidence_id}` | Exact evidence record by ref ID |
+| `GET` | `/api/reconciliation/conflicts` | Contradiction records and human reconciliation decisions |
+| `GET` | `/api/reconciliation/assumptions` | Log of operational and simulation assumptions |
+| `GET` | `/api/reconciliation/entities` | Canonical entity directory |
+| `GET` | `/api/reconciliation/aliases` | Alias resolution directory |
 
 ---
 
@@ -110,15 +143,16 @@ python run.py --export
 
 ## 🧪 Automated Testing
 
-Run the full suite with pytest:
+Run the full suite (43 automated tests) with pytest:
 ```bash
-pytest -v tests/test_cockpit.py
+pytest -v
 ```
 Test categories covered:
-- People & Agent Facts (4 tests)
-- Finance & Payroll Policy (4 tests)
-- Engineering & Product (4 tests)
-- Marketing & Operations (3 tests)
-- Cross-Functional Reconciliation (3 tests)
-- Point-in-Time Cutoff Boundaries (3 tests)
-- Uncertainty, Refusal & Conflicts (6 tests)
+- **FastAPI Endpoints Integration** (16 tests in `tests/test_api.py`)
+- **People & Agent Facts** (4 tests in `tests/test_cockpit.py`)
+- **Finance & Payroll Policy** (4 tests in `tests/test_cockpit.py`)
+- **Engineering & Product** (4 tests in `tests/test_cockpit.py`)
+- **Marketing & Operations** (3 tests in `tests/test_cockpit.py`)
+- **Cross-Functional Reconciliation** (3 tests in `tests/test_cockpit.py`)
+- **Point-in-Time Cutoff Boundaries** (3 tests in `tests/test_cockpit.py`)
+- **Uncertainty, Refusal & Conflicts** (6 tests in `tests/test_cockpit.py`)

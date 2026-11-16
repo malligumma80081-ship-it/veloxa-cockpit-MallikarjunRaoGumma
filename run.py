@@ -3,15 +3,19 @@ import argparse
 import subprocess
 import sys
 from pathlib import Path
-from app.ingestion.pipeline import Day1IngestionPipeline
-from app.reconciliation.entity_resolution import EntityResolver
-from app.evidence.indexer import EvidenceIndexer
+import uvicorn
 from app.cockpit.answer import CockpitQA
 from app.cockpit.risk import RiskEngine
+from app.evidence.indexer import EvidenceIndexer
+from app.ingestion.pipeline import Day1IngestionPipeline
+from app.reconciliation.entity_resolution import EntityResolver
 
 
 def main():
     parser = argparse.ArgumentParser(description="Veloxa CXO Cockpit")
+    parser.add_argument("--api", "--server", action="store_true", dest="run_api", help="Launch FastAPI backend on http://localhost:8000")
+    parser.add_argument("--port", type=int, default=8000, help="Port for FastAPI backend (default 8000)")
+    parser.add_argument("--host", type=str, default="127.0.0.1", help="Host for FastAPI backend (default 127.0.0.1)")
     parser.add_argument("--ingest", action="store_true", help="Run Day 1 ingestion pipeline")
     parser.add_argument("--cli", action="store_true", help="Run interactive CLI mode instead of web UI")
     parser.add_argument("--export", action="store_true", help="Export filled Excel templates")
@@ -30,6 +34,13 @@ def main():
         indexer = EvidenceIndexer()
         indexer.export_index()
         print("Worksheets saved to exports/ directory.")
+
+    if args.run_api:
+        print(f"\n🚀 Starting Veloxa CXO Cockpit FastAPI backend on http://{args.host}:{args.port}")
+        print(f"📖 Interactive Swagger API Docs: http://{args.host}:{args.port}/docs")
+        print(f"📖 Redoc Documentation: http://{args.host}:{args.port}/redoc\n")
+        uvicorn.run("app.main:app", host=args.host, port=args.port, reload=False)
+        return
 
     if args.cli:
         print("\n=== Veloxa CXO Cockpit CLI ===")
@@ -50,7 +61,7 @@ def main():
                 break
         return
 
-    # Start Streamlit by default if not cli
+    # Start Streamlit by default if not cli or api
     dashboard_path = Path(__file__).parent / "app" / "ui" / "dashboard.py"
     print(f"Starting Streamlit dashboard on http://localhost:8501...")
     subprocess.run([sys.executable, "-m", "streamlit", "run", str(dashboard_path)])
