@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Pytest & IDE
+.pytest_cache/
+.vscode/
+.idea/
+
+# Local database (can be regenerated with python run.py --ingest)
+veloxa_cockpit.db
+
+# OS
+.DS_Store
+Thumbs.db
