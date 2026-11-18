@@ -82,3 +82,79 @@ This document records operational, architectural, and data reconciliation assump
   - Candidate Brief: "Where the data is silent (their lives, their private thoughts), invent it and log it as an assumption."
 - **Confidence:** High
 - **What Would Change Mind:** Организаторы hackathon explicitly requiring blending fictional personal details with verified employment records.
+
+---
+
+### ASM-007: Priya Nair September Leaves Signal Acute Flight & Burnout Risk
+- **Date Recorded:** 2026-11-17 (Day 2)
+- **Status:** Active
+- **Assumption:** Priya Nair's cluster of 5 PM half-days in September (Sep 3, 8, 15, 17, 24) followed the freeze of her supporting backend requisitions (REQ-014/REQ-015), representing active job interviewing or severe burnout rather than casual time off.
+- **Source Line / Evidence:**
+  - `Leave_Register.xlsx:Rows:16-20` (5 half-day PM leaves approved by Vikram).
+  - `06.eml` (Meera freezes REQ-014 and REQ-015).
+  - `T3_Head_of_People_Call.docx:Summary` (Deepa is deeply worried about an unnamed engineer).
+- **Confidence:** High
+- **What Would Change Mind:** Doctor certificates showing routine medical visits.
+
+---
+
+### ASM-008: Siddharth Mehta Resignation Triggered by Atlas Launch Indefinite Delay
+- **Date Recorded:** 2026-11-17 (Day 2)
+- **Status:** Active
+- **Assumption:** Siddharth Mehta submitted his resignation on 15 September 2026 because the Atlas launch date slipped indefinitely, leaving his completed launch materials stranded.
+- **Source Line / Evidence:**
+  - `Resignation_Letter_SM.pdf:page_1` ("looking for a role with clearer launch timelines").
+  - `Board_Update_Jul-Sep_2026.pdf:page_1` (GA moved from 15 September).
+- **Confidence:** High
+- **What Would Change Mind:** Stated alternate career reasons unrelated to product launches.
+
+---
+
+### ASM-009: Deepa Joshi's "About Twelve" Attrition Refers to Annualized Percentage
+- **Date Recorded:** 2026-11-17 (Day 2)
+- **Status:** Active
+- **Assumption:** Deepa's spoken phrase "about twelve" in T3 refers to an annualized ~12% attrition rate, rather than 12 individuals departing, as Employee Master verifies only 1 employee has resigned.
+- **Source Line / Evidence:**
+  - `T3_Head_of_People_Call.docx:Summary` ("about twelve, which is normal for Bangalore").
+  - `Employee_Master.xlsx:Rows:4-22` (19 active staff, 1 departure).
+- **Confidence:** High
+- **What Would Change Mind:** Discovery of 11 unrecorded contractor or employee departures.
+
+---
+
+### ASM-010: Marketing Team Will Report to Incoming Chief Revenue Officer (CRO)
+- **Date Recorded:** 2026-11-18 (Day 3)
+- **Status:** Active
+- **Assumption:** Marketing reporting line (Nikhil Bose VX006, Aisha Khan VX011, and REQ-016 backfill) will transition from CEO/unassigned to incoming CRO within 1-2 months per CEO voice note T6b and T4 call.
+- **Source Line / Evidence:**
+  - `T6b_CEO_Voice_Note.docx:Transcript` ("marketing will report to the new CRO from next month").
+  - `T4_Head_of_Marketing_Call.docx:Key_points` ("report into the new CRO, I hear").
+- **Confidence:** High
+- **What Would Change Mind:** CEO notification canceling the CRO executive search.
+
+---
+
+### ASM-011: Atlas v3 GA Slipped 3 Months to 15 December 2026
+- **Date Recorded:** 2026-11-18 (Day 3)
+- **Status:** Active
+- **Assumption:** Vikram Menon's statement in T5 that v3 is "on track, maybe a couple of weeks of buffer needed" minimized a formal 3-month slip committed in Jira on 2 September 2026 moving Atlas GA to 15 December 2026.
+- **Source Line / Evidence:**
+  - `Jira_Export_ATLAS.xlsx:Sheet:Versions:Row:2` (Release Date: 2026-12-15, Changed By: vikram, Last Changed: 2026-09-02).
+  - `T5_VP_Engineering_Call.docx:Summary`.
+  - `08.eml` (Sneha pauses Atlas perf tickets).
+- **Confidence:** High
+- **What Would Change Mind:** An earlier production deployment before 15 December.
+
+---
+
+### ASM-012: "Snehal" in PagerDuty and On-Call Rota is Contractor S. Patil
+- **Date Recorded:** 2026-11-18 (Day 3)
+- **Status:** Active
+- **Assumption:** Responder "Snehal" in PagerDuty incidents and On-Call Rota is S. Patil from Patil Infra Services (Baner Road, Pune), hired for ₹1,41,600/month retainer under invoice PIS-114 starting 18 August to relieve Sneha Kulkarni after 6 weeks solo on-call and 3 August SEV1 outages.
+- **Source Line / Evidence:**
+  - `Invoice_PIS-114.pdf:page_1`.
+  - `OnCall_Rota.xlsx:Sheet:On-call:Rows:10-20`.
+  - `08.eml` (Sneha: "The contractor starts on the rota this week.").
+  - `T5_VP_Engineering_Call.docx` (Vikram conflates Sneha and Snehal).
+- **Confidence:** High
+- **What Would Change Mind:** A Keka employee record for Snehal.

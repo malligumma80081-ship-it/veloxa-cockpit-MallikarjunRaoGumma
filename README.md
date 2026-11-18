@@ -21,7 +21,7 @@ source venv/bin/activate
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Run automated test suite (43 tests)
+# 4. Run automated test suite (69 tests)
 pytest -v
 
 # 5. Launch the Streamlit CXO Cockpit UI

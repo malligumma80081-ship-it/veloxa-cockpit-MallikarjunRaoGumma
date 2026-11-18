@@ -21,6 +21,17 @@ def get_risks(
     return engine.get_ranked_risks(as_of_date=as_of_date, category=category)
 
 
+@router.get("/top3", response_model=List[RiskItem])
+def get_top_3_risks(
+    as_of_date: str = Query(DEFAULT_AS_OF_DATE, description="Point-in-time date cutoff (YYYY-MM-DD)"),
+):
+    """
+    Returns the Top 3 things to worry about today (answering CEO Voice Note T6a).
+    """
+    engine = RiskEngine()
+    return engine.get_top_3_risks(as_of_date=as_of_date)
+
+
 @router.get("/{risk_id}", response_model=RiskItem)
 def get_risk_detail(risk_id: str, as_of_date: str = DEFAULT_AS_OF_DATE):
     engine = RiskEngine()

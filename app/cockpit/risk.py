@@ -1,4 +1,4 @@
-"""Risk engine generating the ranked 'What should I worry about?' view."""
+"""Risk engine generating the ranked 'What should I worry about?' view and Top 3 executive alerts."""
 from typing import List, Optional
 from app.config import DEFAULT_AS_OF_DATE
 from app.evidence.models import RiskItem
@@ -18,3 +18,10 @@ class RiskEngine:
         if category:
             risks = [r for r in risks if r.category.lower() == category.lower()]
         return risks
+
+    def get_top_3_risks(self, as_of_date: str = DEFAULT_AS_OF_DATE) -> List[RiskItem]:
+        """
+        Returns the top 3 critical risks to address CEO Ananya Rao's morning brief request (T6a).
+        """
+        ranked = self.get_ranked_risks(as_of_date)
+        return ranked[:3]

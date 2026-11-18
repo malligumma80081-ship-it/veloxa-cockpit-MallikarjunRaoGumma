@@ -4,7 +4,6 @@ from app.cockpit.answer import CockpitQA
 from app.cockpit.risk import RiskEngine
 from app.agents.interview import AgentInterview
 from app.evidence.repository import EvidenceRepository
-from app.config import DEFAULT_AS_OF_DATE
 
 st.set_page_config(
     page_title="Veloxa CXO Cockpit",
@@ -13,14 +12,14 @@ st.set_page_config(
 )
 
 st.title("🧭 Veloxa Technologies — CXO Cockpit")
-st.caption("Evidence-grounded executive decision cockpit | Hackathon Release: Day 1 (16 Nov 2026)")
+st.caption("Evidence-grounded executive decision cockpit | Hackathon Release: Day 2 (17 Nov 2026)")
 
 # Sidebar for point-in-time date selector and system status
 st.sidebar.header("⚙️ Configuration & Timeline")
 as_of_date = st.sidebar.selectbox(
     "Point-in-Time As-Of Date",
     options=["2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20"],
-    index=0,
+    index=1,  # Default to Day 2 (17 Nov 2026)
     help="Historical cutoff: Only evidence released on or before this date will be retrieved.",
 )
 
@@ -29,9 +28,26 @@ qa_engine = CockpitQA(repo)
 risk_engine = RiskEngine(repo)
 agent_interview = AgentInterview(repo)
 
+# --- T6A RESPONSE: AUTOMATIC TOP 3 MORNING WORRY LIST ---
+st.markdown("### 🌅 Good Morning, Ananya — Top 3 Things to Worry About Today")
+st.caption("Auto-generated executive briefing (responding to Voice Note T6a). Ranked deterministically by severity, likelihood, and verified evidence.")
+
+top_3_risks = risk_engine.get_top_3_risks(as_of_date=as_of_date)
+cols = st.columns(3)
+for idx, (col, r) in enumerate(zip(cols, top_3_risks)):
+    with col:
+        with st.container(border=True):
+            st.markdown(f"#### #{idx+1} {r.risk_title}")
+            st.markdown(f"**Severity:** `{r.severity.upper()}` | **Score:** `{r.rank_score:.1f}`")
+            st.markdown(f"**Impact:** {r.potential_impact}")
+            st.markdown(f"**Next Check:** {r.mitigation_or_next_check}")
+            st.caption(f"Locators: {', '.join(r.locators[:2])}")
+
+st.markdown("---")
+
 tab_qa, tab_risks, tab_agents, tab_evidence, tab_conflicts = st.tabs([
     "💬 Ask the Cockpit",
-    "⚠️ What Should I Worry About?",
+    "⚠️ Full Worry List",
     "👥 People & Agent Interview",
     "📄 Evidence Browser",
     "⚖️ Conflicts & Decisions",
@@ -43,15 +59,18 @@ with tab_qa:
     st.write("Ask any question regarding Veloxa's team, finance, engineering, or operations:")
 
     quick_questions = [
+        "Why did Siddharth Mehta resign?",
+        "Why did engineering pulse score drop to 3.1?",
+        "Why did Priya take 5 half-days in September?",
+        "What happened to the open backend engineering requisitions?",
+        "What is our attrition rate according to Deepa?",
+        "When is Atlas v3 launching?",
         "How many employees work at Veloxa?",
         "What is our ARR?",
         "What is our monthly burn rate?",
-        "When is Atlas v3 launching?",
         "What was our total monthly payroll expense?",
         "What was the issue with Rahul Verma's payslip?",
         "What is Priya's salary?",
-        "Who is on notice period?",
-        "What is our marketing spend on Google Ads?",
     ]
 
     selected_quick = st.selectbox("Quick prompt suggestions:", [""] + quick_questions)
@@ -62,7 +81,6 @@ with tab_qa:
             with st.spinner("Analyzing verified evidence..."):
                 resp = qa_engine.ask(user_q, as_of_date=as_of_date)
 
-                # Status badge
                 status_colors = {
                     "supported": "🟢 Supported",
                     "sources_disagree": "🟠 Sources Disagree",
@@ -96,7 +114,7 @@ with tab_risks:
 
     risks = risk_engine.get_ranked_risks(as_of_date=as_of_date)
     for r in risks:
-        with st.expander(f"#{r.rank_score:.1f} | [{r.category.upper()}] {r.risk_title} ({r.severity.upper()} Severity)", expanded=(r.rank_score >= 8.5)):
+        with st.expander(f"#{r.rank_score:.1f} | [{r.category.upper()}] {r.risk_title} ({r.severity.upper()} Severity)", expanded=(r.rank_score >= 8.9)):
             st.markdown(f"**Description:** {r.description}")
             st.markdown(f"**Potential Impact:** {r.potential_impact}")
             st.markdown(f"**Mitigation / Next Check:** {r.mitigation_or_next_check}")
@@ -137,7 +155,7 @@ with tab_agents:
 # TAB 4: EVIDENCE BROWSER
 with tab_evidence:
     st.subheader("📄 Verified Evidence Index")
-    st.write("Atomic claims extracted from Day 1 data room exports:")
+    st.write("Atomic claims extracted from data room exports:")
     ev_list = repo.get_evidence_point_in_time(as_of_date=as_of_date, exclude_restricted=True)
     table_data = [
         {
@@ -145,6 +163,7 @@ with tab_evidence:
             "Source File": e.source_file,
             "Locator": e.locator,
             "Claim": e.claim,
+            "Release Date": e.release_date,
             "Confidence": e.confidence.upper(),
         }
         for e in ev_list

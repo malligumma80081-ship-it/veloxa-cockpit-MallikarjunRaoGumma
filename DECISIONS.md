@@ -70,3 +70,26 @@ This document records key design trade-offs made during development, documenting
 - **Rationale:**
   - Ensures predictable, explainable risk prioritization that can be defended in whiteboard review sessions.
 - **Revisit Trigger:** If new release packs add quantitative risk probability distributions.
+
+---
+
+## DEC-006: Modeling Organizational Hierarchy Changes via Dynamic Pointer Rebinding
+- **Decision:** Model incoming executive transitions (such as marketing reporting to incoming CRO in T6b) by registering planned executive roles (`ENT_CHIEF_REVENUE_OFFICER`) and supporting dynamic manager pointer updates in the entity graph, while isolating point-in-time snapshots using effective dates.
+- **Alternatives Considered:**
+  1. *Hardcoding New Reporting Trees*: Immediately overwriting all marketing employees' `manager_id` to the CRO. This would cause historical queries (as of Day 1/2) to incorrectly show the CRO existed before hiring.
+  2. *Refusing to Represent Future Org Changes*: Leaving marketing reporting as-is until the CRO's first day. This fails to address Ananya's explicit mandate in T6b (*"Make sure the thing doesn't break when we move people around"*).
+- **Rationale:**
+  - Maintains strict point-in-time temporal boundaries (`as_of_date`).
+  - Ensures the Cockpit remains resilient to planned leadership restructuring.
+- **Revisit Trigger:** When the CRO is formally named and onboarded on Keka HRMS.
+
+---
+
+## DEC-007: Treating Jira Release Dates as Authoritative Engineering Timeline Source
+- **Decision:** When evaluating product launch schedules (Atlas v3 GA), the Jira Versions audit trail (which records timestamped release date updates, original release dates, and changing authors) is treated as the primary operational fact, while executive verbal statements (e.g. Vikram's "couple weeks buffer") are recorded as competing claims or minimizations.
+- **Alternatives Considered:**
+  1. *Accepting VP Engineering Verbal Claim*: Vikram stated v3 needed a "couple weeks buffer" and was "still September-ish" in T5. However, Jira records that on 2 September 2026, Vikram himself moved the Atlas GA date to 15 December 2026. Accepting his verbal claim would mislead the CEO regarding launch readiness.
+- **Rationale:**
+  - Jira version records provide indisputable software delivery evidence (`Changed By: vikram, Last Changed: 2026-09-02, Release Date: 2026-12-15`).
+  - Corroborates the July-September Board Update and the resignation letter of Siddharth Mehta.
+- **Revisit Trigger:** Formal deployment logs indicating production customer rollout before 15 December.

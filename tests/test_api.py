@@ -7,8 +7,12 @@ from app.ingestion.pipeline import Day1IngestionPipeline
 
 @pytest.fixture(scope="session", autouse=True)
 def init_data():
-    pipeline = Day1IngestionPipeline()
-    pipeline.run()
+    from app.ingestion.day2_pipeline import Day2IngestionPipeline
+    from app.ingestion.day3_pipeline import Day3IngestionPipeline
+    from app.ingestion.pipeline import Day1IngestionPipeline
+    Day1IngestionPipeline().run()
+    Day2IngestionPipeline().run()
+    Day3IngestionPipeline().run()
 
 
 @pytest.fixture
@@ -158,3 +162,65 @@ def test_api_export_worksheets(client):
     assert data["status"] == "success"
     assert "Entity_Resolution.xlsx" in data["entity_resolution_path"]
     assert "Evidence_Index.xlsx" in data["evidence_index_path"]
+
+
+def test_api_get_top3_risks(client):
+    response = client.get("/api/risks/top3?as_of_date=2026-11-17")
+    assert response.status_code == 200
+    top3 = response.json()
+    assert len(top3) == 3
+    assert "Priya" in top3[0]["risk_title"]
+
+
+def test_api_qa_day2_sid_resignation(client):
+    response = client.post("/api/qa/ask", json={"question": "Why did Siddharth Mehta resign?", "as_of_date": "2026-11-17"})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "supported"
+    assert "clearer launch timelines" in data["answer"] or "launch timelines" in data["answer"]
+
+
+def test_api_qa_day2_pulse_survey(client):
+    response = client.post("/api/qa/ask", json={"question": "Why did engineering pulse score drop to 3.1?", "as_of_date": "2026-11-17"})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "supported"
+    assert "3.1" in data["answer"]
+
+
+# ==============================================================================
+# Day 3 API Tests (4 tests)
+# ==============================================================================
+
+def test_api_qa_day3_atlas_launch_kit(client):
+    response = client.post("/api/qa/ask", json={"question": "What is the status of the Atlas launch kit?", "as_of_date": "2026-11-18"})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "supported"
+    assert "Launch deck" in data["answer"]
+    assert any("Atlas_Launch_Kit_v1.pdf" in c["source"] for c in data["evidence"])
+
+
+def test_api_qa_day3_patil_infra_invoice(client):
+    response = client.post("/api/qa/ask", json={"question": "What is invoice PIS-114 from Patil Infra?", "as_of_date": "2026-11-18"})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "supported"
+    assert "1,41,600" in data["answer"]
+
+
+def test_api_qa_day3_marketing_cro_transition(client):
+    response = client.post("/api/qa/ask", json={"question": "Who will marketing report to next month?", "as_of_date": "2026-11-18"})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "supported"
+    assert "CRO" in data["answer"] or "Chief Revenue Officer" in data["answer"]
+
+
+def test_api_reconciliation_marketing_spend_conflict(client):
+    response = client.get("/api/reconciliation/conflicts")
+    assert response.status_code == 200
+    conflicts = response.json()
+    conflict_topics = " ".join(item["conflict"]["topic"] for item in conflicts)
+    conflict_ids = [item["conflict"]["conflict_id"] for item in conflicts]
+    assert "Marketing Spend" in conflict_topics or "CONF_MARKETING_SPEND_H1" in conflict_ids
