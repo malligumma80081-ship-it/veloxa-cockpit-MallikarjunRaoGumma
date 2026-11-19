@@ -21,7 +21,7 @@ source venv/bin/activate
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Run automated test suite (69 tests)
+# 4. Run automated test suite (80 tests)
 pytest -v
 
 # 5. Launch the Streamlit CXO Cockpit UI
@@ -60,6 +60,8 @@ python run.py --export
 | `POST` | `/api/qa/ask` | Executive Q&A with exact citations, privacy guardrails, and temporal boundaries |
 | `GET` | `/api/qa/audit` | Retrieves audited question history |
 | `GET` | `/api/risks` | Returns the ranked executive risk view (`as_of_date`, optional `category`) |
+| `GET` | `/api/risks/top3` | Automatic Top 3 morning brief risks (answering CEO Voice Note T6a) |
+| `GET` | `/api/risks/flight-risk` | Observable employee flight risk ranking with privacy refusal for chat surveillance (answering T6c) |
 | `GET` | `/api/risks/{risk_id}` | Detailed risk information and source locators |
 | `GET` | `/api/agents` | Lists the 14 interviewable colleague personas |
 | `GET` | `/api/agents/{employee_id}` | Detailed employee profile with verified facts vs unknown fields |

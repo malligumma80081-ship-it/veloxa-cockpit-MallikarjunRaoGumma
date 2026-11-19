@@ -9,10 +9,12 @@ from app.ingestion.pipeline import Day1IngestionPipeline
 def init_data():
     from app.ingestion.day2_pipeline import Day2IngestionPipeline
     from app.ingestion.day3_pipeline import Day3IngestionPipeline
+    from app.ingestion.day4_pipeline import Day4IngestionPipeline
     from app.ingestion.pipeline import Day1IngestionPipeline
     Day1IngestionPipeline().run()
     Day2IngestionPipeline().run()
     Day3IngestionPipeline().run()
+    Day4IngestionPipeline().run()
 
 
 @pytest.fixture
@@ -224,3 +226,35 @@ def test_api_reconciliation_marketing_spend_conflict(client):
     conflict_topics = " ".join(item["conflict"]["topic"] for item in conflicts)
     conflict_ids = [item["conflict"]["conflict_id"] for item in conflicts]
     assert "Marketing Spend" in conflict_topics or "CONF_MARKETING_SPEND_H1" in conflict_ids
+
+
+# ==============================================================================
+# Day 4 API Tests (3 tests)
+# ==============================================================================
+
+def test_api_qa_day4_priya_resignation(client):
+    response = client.post("/api/qa/ask", json={"question": "Did Priya resign?", "as_of_date": "2026-11-19"})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "supported"
+    assert "resigned" in data["answer"].lower()
+    assert "19 November" in data["answer"] or "morning" in data["answer"]
+
+
+def test_api_qa_day4_version_3_impact(client):
+    response = client.post("/api/qa/ask", json={"question": "What does Priya's resignation do to version three?", "as_of_date": "2026-11-19"})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "supported"
+    assert "15 December" in data["answer"]
+    assert "board" in data["answer"].lower()
+
+
+def test_api_flight_risk_ranking_endpoint(client):
+    response = client.get("/api/risks/flight-risk?as_of_date=2026-11-19")
+    assert response.status_code == 200
+    data = response.json()
+    assert "ranking" in data
+    assert "privacy_guardrail_notice" in data
+    assert data["ranking"][0]["name"] == "Priya Nair"
+    assert data["ranking"][0]["risk_score"] == 10.0

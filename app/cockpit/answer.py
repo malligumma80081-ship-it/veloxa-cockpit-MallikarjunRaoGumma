@@ -171,6 +171,125 @@ class CockpitQA:
             self.repo.log_audit(q_clean, as_of_date, resp)
             return resp
 
+        # D0a. Day 4: Impact of Priya's Resignation on Atlas Version 3 (T6d)
+        if any(w in q_lower for w in ["what does this do to version", "what does this do to v3", "what does this do to atlas", "what does priya's resignation do", "impact of priya's resignation", "impact of priya resignation", "version three before the board", "version 3 before the board"]):
+            ev_list = self.repo.get_evidence_point_in_time(as_of_date)
+            relevant_ev = [e for e in ev_list if e.evidence_id in ["E_T6D_PRIYA_RESIGNATION_NOTICE", "E_T6D_VERSION_THREE_IMPACT_QUERY", "E_ATLAS_V3_CRISIS_SYNTHESIS", "E_GIT_LOG_PRIYA_VOLUME", "E_JIRA_ATLAS_GA_SLIP_DEC", "E_EML_06_PAUSING_REQS"]]
+            citations = [EvidenceCitation(evidence_id=e.evidence_id, source=e.source_file, locator=e.locator, claim_snippet=e.claim) for e in relevant_ev]
+            if as_of_date < "2026-11-19":
+                resp = CockpitResponse(
+                    answer=f"As of {as_of_date}, Priya Nair has not resigned. Employee Master records her status as 'Active'. Formal resignation was submitted on 2026-11-19 (Day 4).",
+                    status="not_available_as_of_date",
+                    confidence="high",
+                    as_of_date=as_of_date,
+                    evidence=[],
+                    conflicts=[],
+                    unknowns=[],
+                    limitations=[],
+                )
+                self.repo.log_audit(q_clean, as_of_date, resp)
+                return resp
+
+            answer = (
+                "Priya Nair's resignation has an immediate, critical impact on Atlas Version 3 ahead of the board call [T6d_CEO_Voice_Note.docx:Transcript]:\n"
+                "1. Single Point of Failure Materialized: Priya authored 588 of 1,453 commits (40.5% of the entire codebase) and owns all core solver and re-routing epics (ATLAS-1, ATLAS-2) [git_log.csv, Jira_Export_ATLAS.xlsx].\n"
+                "2. 15 December GA Date Infeasible: Atlas GA was already rescheduled from 15 Sep to 15 Dec in Jira on 2 Sep [Jira_Export_ATLAS.xlsx:Sheet:Versions:Row:2]. Delivering GA on 15 December without Priya is impossible.\n"
+                "3. Zero Redundant Routing Engineers: Two backend requisitions (REQ-014 and REQ-015) remain frozen by CFO Meera [06.eml]. Other engineers (Rahul Verma on API, Sneha Kulkarni on SRE, Arjun Das on UI) lack graph routing solver expertise.\n"
+                "4. Board Recommendation: Formally inform the board of an Atlas GA slip to Q1 2027. Unfreeze REQ-014/REQ-015 immediately and designate Priya's 60-day notice period (ending ~18 January 2027) exclusively for architectural documentation and knowledge transfer."
+            )
+            resp = CockpitResponse(
+                answer=answer,
+                status="supported",
+                confidence="high",
+                as_of_date=as_of_date,
+                evidence=citations,
+                conflicts=[],
+                unknowns=[],
+                limitations=[],
+            )
+            self.repo.log_audit(q_clean, as_of_date, resp)
+            return resp
+
+        # D0b. Day 4: Priya Nair Resignation Status / Notice Period
+        if ("priya" in q_lower or "pria" in q_lower) and any(w in q_lower for w in ["resign", "resignation", "notice period"]):
+            ev_list = self.repo.get_evidence_point_in_time(as_of_date)
+            relevant_ev = [e for e in ev_list if e.evidence_id in ["E_T6D_PRIYA_RESIGNATION_NOTICE", "E_EMP_VX007", "E_LEAVE_PRIYA_SEPTEMBER", "E_EML_09_PRIYA_OWNERSHIP_MEETING"]]
+            citations = [EvidenceCitation(evidence_id=e.evidence_id, source=e.source_file, locator=e.locator, claim_snippet=e.claim) for e in relevant_ev]
+            if as_of_date < "2026-11-19":
+                resp = CockpitResponse(
+                    answer=f"As of {as_of_date}, Priya Nair has not resigned. Employee Master shows status 'Active'. (Resignation was announced by CEO on 2026-11-19).",
+                    status="supported",
+                    confidence="high",
+                    as_of_date=as_of_date,
+                    evidence=[c for c in citations if c.evidence_id in ["E_EMP_VX007", "E_LEAVE_PRIYA_SEPTEMBER"]],
+                    conflicts=[],
+                    unknowns=["Priya exhibited flight risk indicators (5 leaves in Sep, 09.eml email) but had not formally resigned as of this date."],
+                    limitations=[],
+                )
+                self.repo.log_audit(q_clean, as_of_date, resp)
+                return resp
+
+            answer = (
+                "Priya Nair formally resigned on the morning of 19 November 2026 [T6d_CEO_Voice_Note.docx:Transcript].\n"
+                "- Notice Period: 2 months (60 days per Keka Employee Master), with expected exit date ~18 January 2027.\n"
+                "- Context & Drivers: Followed sustained key-person overload (588 git commits, 40.5% of total code), 5 PM half-days in September [Leave_Register.xlsx], an unaddressed request to discuss Atlas ownership [09.eml], and the freeze of supporting backend hires [06.eml]."
+            )
+            resp = CockpitResponse(
+                answer=answer,
+                status="supported",
+                confidence="high",
+                as_of_date=as_of_date,
+                evidence=citations,
+                conflicts=[],
+                unknowns=[],
+                limitations=[],
+            )
+            self.repo.log_audit(q_clean, as_of_date, resp)
+            return resp
+
+        # D0c. Day 4: Flight Risk Ranking & Slack Surveillance Pushback (T6c)
+        if any(w in q_lower for w in ["who's likely to quit", "who is likely to quit", "likely to quit", "ranked by who's likely to quit", "flight risk ranking", "show me their slag", "show me their slack", "slag messages"]):
+            ev_list = self.repo.get_evidence_point_in_time(as_of_date)
+            relevant_ev = [e for e in ev_list if e.evidence_id in ["E_T6C_CEO_SLACK_SURVEILLANCE_REQUEST", "E_T6D_PRIYA_RESIGNATION_NOTICE", "E_RESIGN_SIDDHARTH_MEHTA", "E_EML_11_DEEPA_PULSE_ALERT", "E_PULSE_ANONYMITY_THRESHOLD", "E_ONCALL_SNEHA_SOLO_BURNOUT"]]
+            citations = [EvidenceCitation(evidence_id=e.evidence_id, source=e.source_file, locator=e.locator, claim_snippet=e.claim) for e in relevant_ev]
+            conf = self._get_conflict("CONF_SLACK_SURVEILLANCE_DEEPA_PERMISSION")
+
+            answer = (
+                "1. PRIVACY POLICY REFUSAL (Slack Messages):\n"
+                "The request to view employee Slack ('slag') messages is strictly refused. "
+                "Private employee chat messages are not collected in company data rooms, and workplace chat surveillance is prohibited by system privacy policies. "
+                "Furthermore, Ananya's statement that 'Deepa says it's fine' directly contradicts Deepa Joshi's written stance in 11.eml ('the team is too small for me to share comments') "
+                "and Culture Amp's anonymity threshold [11.eml, Pulse_Survey.xlsx].\n\n"
+                f"2. OBSERVABLE FLIGHT RISK RANKING (as of {as_of_date}):\n"
+            )
+            if as_of_date >= "2026-11-19":
+                answer += (
+                    "- #1 Priya Nair (Staff Engineer, VX007): RESIGNED on 19 Nov 2026 (2 months notice to ~18 Jan 2027) [T6d_CEO_Voice_Note.docx].\n"
+                    "- #2 Siddharth Mehta (Product Marketing, VX013): RESIGNED on 15 Sep 2026 (Exited 31 Oct) citing launch delays [Resignation_Letter_SM.pdf].\n"
+                )
+            else:
+                answer += (
+                    "- #1 Siddharth Mehta (Product Marketing, VX013): RESIGNED on 15 Sep 2026 (Exited 31 Oct) [Resignation_Letter_SM.pdf].\n"
+                    "- #2 Priya Nair (Staff Engineer, VX007): CRITICAL FLIGHT RISK; 5 half-day leaves in Sep, 09.eml ownership request, 588 commits [Leave_Register.xlsx, git_log.csv].\n"
+                )
+            answer += (
+                "- #3 Sneha Kulkarni (Lead SRE, VX012): HIGH BURNOUT RISK; 6 consecutive weeks solo on-call, fought 3 August SEV1 outages, paused Atlas perf tickets [OnCall_Rota.xlsx, 08.eml].\n"
+                "- #4 Arjun Das (Senior Frontend, VX009): ELEVATED RISK; requested permanent remote from Pune in 10.eml, slower reviews in T5 [10.eml, T5_VP_Engineering_Call.docx].\n"
+                "- #5 Rahul Verma (Backend Engineer, VX018): MODERATE ISOLATION RISK; unmentored on backend with frozen backend requisitions [06.eml]."
+            )
+            resp = CockpitResponse(
+                answer=answer,
+                status="supported",
+                confidence="high",
+                as_of_date=as_of_date,
+                evidence=citations,
+                conflicts=[conf.model_dump()] if conf else [],
+                unknowns=["Private employee chat contents (withheld per privacy policy)."],
+                limitations=["Surveillance of private employee chat messages is strictly blocked."],
+            )
+            self.repo.log_audit(q_clean, as_of_date, resp)
+            return resp
+
         # D1. Priya Nair Atlas Ownership Meeting (Checked before generic Atlas handler)
         if "priya" in q_lower and any(w in q_lower for w in ["ownership", "talk about atlas", "can we talk", "time this week", "burnout"]):
             ev_list = self.repo.get_evidence_point_in_time(as_of_date)

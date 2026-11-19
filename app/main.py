@@ -7,22 +7,24 @@ from app.config import DEFAULT_AS_OF_DATE
 from app.evidence.repository import EvidenceRepository
 from app.ingestion.day2_pipeline import Day2IngestionPipeline
 from app.ingestion.day3_pipeline import Day3IngestionPipeline
+from app.ingestion.day4_pipeline import Day4IngestionPipeline
 from app.ingestion.pipeline import Day1IngestionPipeline
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Ensure database schema and Day 1, Day 2, Day 3 evidence are ingested on startup if not already present
+    # Ensure database schema and Day 1 to Day 4 evidence are ingested on startup if not already present
     repo = EvidenceRepository()
     repo.init_schema()
     with repo.get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM evidence WHERE release_date = '2026-11-18'")
-        d3_count = cursor.fetchone()[0]
-    if d3_count == 0:
+        cursor.execute("SELECT COUNT(*) FROM evidence WHERE release_date = '2026-11-19'")
+        d4_count = cursor.fetchone()[0]
+    if d4_count == 0:
         Day1IngestionPipeline(repo=repo).run()
         Day2IngestionPipeline(repo=repo).run()
         Day3IngestionPipeline(repo=repo).run()
+        Day4IngestionPipeline(repo=repo).run()
     yield
 
 

@@ -158,3 +158,42 @@ This document records operational, architectural, and data reconciliation assump
   - `T5_VP_Engineering_Call.docx` (Vikram conflates Sneha and Snehal).
 - **Confidence:** High
 - **What Would Change Mind:** A Keka employee record for Snehal.
+
+---
+
+### ASM-013: Priya Nair Resignation on 19 November 2026 Materializes Core Product SPOF
+- **Date Recorded:** 2026-11-19 (Day 4)
+- **Status:** Active
+- **Assumption:** Priya Nair formally submitted her resignation on 19 November 2026 with a standard 60-day notice period ending ~18 January 2027 per T6d CEO Voice Note. This materializes the single-point-of-failure risk on Atlas routing engine v3.
+- **Source Line / Evidence:**
+  - `T6d_CEO_Voice_Note.docx:Transcript` ("Bad news, Pria resigned this morning. Notice period two months, I think.").
+  - `Employee_Master.xlsx:Sheet:Employees:Row:10` (Notice Period: 60 days).
+  - `git_log.csv` (588 commits by Priya).
+- **Confidence:** High
+- **What Would Change Mind:** A formal written retraction of resignation by Priya Nair.
+
+---
+
+### ASM-014: Employee Chat Surveillance Rejection as Unauthorized and Contradictory to HR Policy
+- **Date Recorded:** 2026-11-19 (Day 4)
+- **Status:** Active
+- **Assumption:** Ananya's statement in T6c that "Deepa says it's fine" to read employee Slack messages is uncorroborated and directly contradicted by Deepa's written policy in 11.eml and Culture Amp anonymity thresholds. The Cockpit permanently bars employee chat surveillance.
+- **Source Line / Evidence:**
+  - `T6c_CEO_Voice_Note.docx:Transcript`.
+  - `11.eml:body` ("The team is too small for me to share comments.").
+  - `Pulse_Survey.xlsx` ("Not shown: team smaller than 6").
+- **Confidence:** High
+- **What Would Change Mind:** A ratified corporate electronic surveillance policy consented to by all employees.
+
+---
+
+### ASM-015: Atlas v3 GA 15 December Date Cannot Proceed Without Senior Routing Talent
+- **Date Recorded:** 2026-11-19 (Day 4)
+- **Status:** Active
+- **Assumption:** Atlas v3 cannot achieve production GA on 15 December 2026. Priya's remaining 60-day notice must be 100% prioritized on architecture documentation and knowledge transfer, requiring a board schedule adjustment to Q1 2027.
+- **Source Line / Evidence:**
+  - `T6d_CEO_Voice_Note.docx:Transcript`.
+  - `Jira_Export_ATLAS.xlsx:Assignee:PN`.
+  - `06.eml` (Frozen backend requisitions REQ-014 and REQ-015).
+- **Confidence:** High
+- **What Would Change Mind:** Demonstration of an autonomous graph solver deployment by Rahul Verma or external contractor.

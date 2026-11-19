@@ -9,6 +9,7 @@ from app.cockpit.risk import RiskEngine
 from app.evidence.indexer import EvidenceIndexer
 from app.ingestion.day2_pipeline import Day2IngestionPipeline
 from app.ingestion.day3_pipeline import Day3IngestionPipeline
+from app.ingestion.day4_pipeline import Day4IngestionPipeline
 from app.ingestion.pipeline import Day1IngestionPipeline
 from app.reconciliation.entity_resolution import EntityResolver
 
@@ -23,16 +24,18 @@ def main():
     parser.add_argument("--export", action="store_true", help="Export filled Excel templates")
     args = parser.parse_args()
 
-    # Always ensure Day 1, Day 2 & Day 3 pipelines are ingested
-    print("Ingesting / syncing Day 1, Day 2 & Day 3 data rooms...")
+    # Always ensure Day 1, Day 2, Day 3 & Day 4 pipelines are ingested
+    print("Ingesting / syncing Day 1, Day 2, Day 3 & Day 4 data rooms...")
     d1 = Day1IngestionPipeline()
     stats1 = d1.run()
     d2 = Day2IngestionPipeline()
     stats2 = d2.run()
     d3 = Day3IngestionPipeline()
     stats3 = d3.run()
-    total_files = stats1['source_files'] + stats2['source_files'] + stats3['source_files']
-    total_ev = stats1['evidence_records'] + stats2['evidence_records'] + stats3['evidence_records']
+    d4 = Day4IngestionPipeline()
+    stats4 = d4.run()
+    total_files = stats1['source_files'] + stats2['source_files'] + stats3['source_files'] + stats4['source_files']
+    total_ev = stats1['evidence_records'] + stats2['evidence_records'] + stats3['evidence_records'] + stats4['evidence_records']
     print(f"Ingestion complete: {total_files} files, {total_ev} evidence records.")
 
     if args.ingest:
@@ -43,7 +46,7 @@ def main():
         resolver = EntityResolver()
         resolver.export_worksheet()
         indexer = EvidenceIndexer()
-        indexer.export_index(as_of_date="2026-11-18")
+        indexer.export_index(as_of_date="2026-11-19")
         print("Worksheets saved to exports/ directory.")
         return
 

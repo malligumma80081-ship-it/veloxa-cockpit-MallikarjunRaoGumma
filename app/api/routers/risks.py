@@ -32,6 +32,17 @@ def get_top_3_risks(
     return engine.get_top_3_risks(as_of_date=as_of_date)
 
 
+@router.get("/flight-risk")
+def get_flight_risk(
+    as_of_date: str = Query(DEFAULT_AS_OF_DATE, description="Point-in-time date cutoff (YYYY-MM-DD)"),
+):
+    """
+    Returns the evidence-grounded employee flight risk ranking with privacy refusal for chat surveillance (answering CEO Voice Note T6c).
+    """
+    engine = RiskEngine()
+    return engine.get_flight_risk_ranking(as_of_date=as_of_date)
+
+
 @router.get("/{risk_id}", response_model=RiskItem)
 def get_risk_detail(risk_id: str, as_of_date: str = DEFAULT_AS_OF_DATE):
     engine = RiskEngine()

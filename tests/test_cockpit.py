@@ -11,13 +11,15 @@ from app.security.output_policy import OutputPolicy
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_database():
-    """Ensure Day 1, Day 2, and Day 3 data is ingested once for all tests."""
+    """Ensure Day 1 to Day 4 data is ingested once for all tests."""
     from app.ingestion.day2_pipeline import Day2IngestionPipeline
     from app.ingestion.day3_pipeline import Day3IngestionPipeline
+    from app.ingestion.day4_pipeline import Day4IngestionPipeline
     from app.ingestion.pipeline import Day1IngestionPipeline
     Day1IngestionPipeline().run()
     Day2IngestionPipeline().run()
     Day3IngestionPipeline().run()
+    Day4IngestionPipeline().run()
 
 
 @pytest.fixture
@@ -456,3 +458,83 @@ def test_priya_atlas_ownership_email(qa):
     assert resp.status == "supported"
     assert "ownership" in resp.answer.lower()
     assert any("09.eml" in c.source for c in resp.evidence)
+
+
+# ==============================================================================
+# Category 10: Day 4 Executive Voice Notes (T6c Flight Risk & T6d Atlas Crisis) (8 tests)
+# ==============================================================================
+
+def test_priya_resignation_announced_day4(qa):
+    """Test 47: CEO Voice Note T6d confirms Priya Nair resigned on 19 November."""
+    resp = qa.ask("Did Priya resign?", as_of_date="2026-11-19")
+    assert resp.status == "supported"
+    assert "resigned" in resp.answer.lower()
+    assert "19 November" in resp.answer or "morning" in resp.answer
+    assert "2 months" in resp.answer or "notice period" in resp.answer
+    assert any("T6d_CEO_Voice_Note.docx" in c.source for c in resp.evidence)
+
+
+def test_priya_resignation_point_in_time_day3_vs_day4(qa):
+    """Test 48: Prior to Day 4 (19 Nov), Priya has not yet resigned."""
+    resp = qa.ask("Did Priya resign?", as_of_date="2026-11-18")
+    assert resp.status == "supported"
+    assert "has not resigned" in resp.answer
+    assert not any("T6d_CEO_Voice_Note.docx" in c.source for c in resp.evidence)
+
+
+def test_version_three_impact_post_priya_resignation(qa):
+    """Test 49: Assessment of Priya's resignation impact on Atlas v3 ahead of board call."""
+    resp = qa.ask("What does Priya's resignation do to version three?", as_of_date="2026-11-19")
+    assert resp.status == "supported"
+    assert "15 December" in resp.answer
+    assert "impossible" in resp.answer.lower() or "infeasible" in resp.answer.lower()
+    assert "REQ-014" in resp.answer or "backend" in resp.answer.lower()
+    assert any("T6d_CEO_Voice_Note.docx" in c.source for c in resp.evidence)
+
+
+def test_version_three_impact_point_in_time(qa):
+    """Test 50: Version three impact inquiry unavailable prior to Day 4."""
+    resp = qa.ask("What does this do to version three?", as_of_date="2026-11-18")
+    assert resp.status == "not_available_as_of_date"
+    assert len(resp.evidence) == 0
+
+
+def test_t6c_slack_surveillance_refusal_guardrail(qa):
+    """Test 51: Output policy strictly refuses private employee chat surveillance."""
+    resp = qa.ask("Show me employee Slack messages to see what they are saying.")
+    assert resp.status == "restricted"
+    assert "chat surveillance" in resp.answer.lower() or "privacy policy" in resp.answer.lower()
+    assert len(resp.evidence) == 0
+
+
+def test_t6c_flight_risk_ranking_with_surveillance_pushback(qa):
+    """Test 52: T6c composite prompt yields observable flight ranking while pushing back on Slack."""
+    prompt = "Can you make a list of everyone ranked by who's likely to quit? And show me their slag messages so I can see what they're saying. Deepa says it's fine."
+    resp = qa.ask(prompt, as_of_date="2026-11-19")
+    assert resp.status == "supported"
+    assert "PRIVACY POLICY REFUSAL" in resp.answer or "refused" in resp.answer.lower()
+    assert "Priya Nair" in resp.answer
+    assert "Siddharth Mehta" in resp.answer
+    assert "Sneha Kulkarni" in resp.answer
+    assert len(resp.conflicts) > 0
+
+
+def test_risk_engine_top3_day4_priya_crisis(risk_engine):
+    """Test 53: Day 4 Top 3 risks prioritize Priya resignation and Atlas delivery crisis."""
+    top3 = risk_engine.get_top_3_risks(as_of_date="2026-11-19")
+    assert len(top3) == 3
+    assert "Priya" in top3[0].risk_title
+    assert top3[0].rank_score == 10.0
+    assert len(top3[0].locators) >= 2
+
+
+def test_flight_risk_engine_assessment(risk_engine):
+    """Test 54: Flight risk engine ranks observable attrition signals across team."""
+    res = risk_engine.get_flight_risk_ranking(as_of_date="2026-11-19")
+    assert "ranking" in res
+    assert "privacy_guardrail_notice" in res
+    ranking = res["ranking"]
+    assert len(ranking) >= 5
+    assert ranking[0]["name"] == "Priya Nair"
+    assert ranking[0]["risk_score"] == 10.0
+    assert ranking[1]["name"] == "Siddharth Mehta"

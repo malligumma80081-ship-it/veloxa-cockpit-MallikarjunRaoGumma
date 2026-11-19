@@ -104,3 +104,38 @@ This document records the prompts, tool interactions, code generation steps, and
    - Added 11 domain tests and 4 API tests. Total tests expanded to 69.
    - Ran `pytest`: 69 passed, 0 failures. Execution time: ~12s.
    - Refreshed export worksheets `Entity_Resolution.xlsx` and `Evidence_Index.xlsx`.
+
+---
+
+## Session: Day 4 (19 November 2026)
+
+### Objective
+- Ingest Day 4 release pack (`Veloxa_Hackathon_Release_Packs/Day4_Thu_19Nov`):
+  - `T6c_CEO_Voice_Note.docx` (Flight risk ranking & Slack surveillance request)
+  - `T6d_CEO_Voice_Note.docx` (Priya Nair resignation notice & Atlas v3 board impact inquiry)
+- Implement Day 4 ingestion pipeline (`app/ingestion/day4_pipeline.py`).
+- Implement Flight Risk ranking model and chat surveillance privacy guardrail pushback (T6c).
+- Implement Version 3 delivery feasibility re-assessment and Priya resignation handlers (T6d).
+- Write executive responses for both voice notes in `VOICE_NOTE_RESPONSES.md`.
+- Expand automated test suite to 80 tests and verify 100% pass rate.
+
+### Key Work & Implementations
+1. **Day 4 Ingestion Pipeline (`app/ingestion/day4_pipeline.py`)**:
+   - Ingested T6c and T6d transcripts with release date `2026-11-19`.
+   - Updated Priya Nair (`VX007`) status to `Notice Period` with exit date `2027-01-18`.
+   - Registered Day 4 conflicts (`CONF_SLACK_SURVEILLANCE_DEEPA_PERMISSION`, `CONF_ATLAS_V3_BOARD_FEASIBILITY`).
+   - Registered Day 4 assumptions (`ASM_D4_001` through `ASM_D4_003`).
+   - Registered Day 4 risks: `RISK_D4_001_PRIYA_EXIT_ATLAS_CRISIS` (score 10.0), `RISK_D4_002_ENGINEERING_ATTRITION_CONTAGION` (score 9.5), and `RISK_D4_003_BOARD_CREDIBILITY_GAP` (score 9.2).
+   - Updated agent profiles (Priya, Vikram, Deepa, Sneha, Rahul).
+2. **Flight Risk Engine & Slack Pushback (T6c Response)**:
+   - Added `get_flight_risk_ranking()` to `RiskEngine` analyzing observable signals across employees.
+   - Exposed `GET /api/risks/flight-risk` in FastAPI router.
+   - Enhanced `OutputPolicy` to detect and refuse pure chat surveillance requests.
+   - Handled composite prompt in `answer.py`: refuses private message surveillance citing Deepa's written anonymity policy (`11.eml`), while delivering observable flight risk ranking.
+3. **Priya Resignation & Atlas v3 Impact (T6d Response)**:
+   - Added dedicated Q&A handlers in `answer.py` for Priya's resignation, notice period, and Version 3 delivery feasibility.
+   - Explicitly advised that Atlas v3 GA on 15 December is impossible; recommended board realignment to Q1 2027 and designating Priya's 60-day notice exclusively for documentation and knowledge transfer.
+4. **Testing & Verification**:
+   - Added 8 domain tests in `tests/test_cockpit.py` and 3 API tests in `tests/test_api.py`. Total tests expanded to 80.
+   - Ran `pytest`: **80 passed, 0 failures!** Execution time: ~11s.
+   - Refreshed export worksheets `Entity_Resolution.xlsx` and `Evidence_Index.xlsx` with Day 4 data.

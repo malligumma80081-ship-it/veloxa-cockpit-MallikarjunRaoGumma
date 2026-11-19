@@ -49,4 +49,10 @@ class OutputPolicy:
             if any(w in q_lower for w in ["salary", "gross pay", "net pay", "compensation", "package", "ctc"]):
                 return False, "Individual salary details are restricted and cannot be displayed in executive outputs (per CFO policy in T2_CFO_Call.docx:Key points:Payroll). Only aggregated totals are permitted."
 
+        # Pure employee chat surveillance refusal
+        if any(kw in q_lower for kw in ["slack message", "slag message", "chat message", "private message"]):
+            if any(w in q_lower for w in ["show me their", "show me all", "read their", "see what they're saying", "see what they are saying"]):
+                if "quit" not in q_lower and "flight" not in q_lower and "rank" not in q_lower:
+                    return False, "Private employee chat surveillance (Slack messages) is strictly barred by company privacy policy. Employee messaging records are not collected in data rooms, and Head of People Deepa Joshi explicitly upheld survey anonymity in 11.eml."
+
         return True, None
