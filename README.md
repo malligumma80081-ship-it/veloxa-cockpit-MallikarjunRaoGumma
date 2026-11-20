@@ -158,3 +158,29 @@ Test categories covered:
 - **Cross-Functional Reconciliation** (3 tests in `tests/test_cockpit.py`)
 - **Point-in-Time Cutoff Boundaries** (3 tests in `tests/test_cockpit.py`)
 - **Uncertainty, Refusal & Conflicts** (6 tests in `tests/test_cockpit.py`)
+
+
+<!-- Dashboard screenshot  -->
+<!-- ASK THE COLPLOIT -->
+![alt text](image.png)
+![alt text](image-1.png)
+
+<!-- Full worry list -->
+![alt text](image-2.png)
+
+<!-- People_Agent_Interview -->
+![alt text](image-3.png)
+![alt text](image-4.png)
+![alt text](image-5.png)
+<!-- 
+Evidance_Browser -->
+![alt text](image-6.png)
+![alt text](image-7.png)
+
+<!-- Conflict_Desicions -->
+![alt text](image-8.png)
+![alt text](image-9.png)
+
+<!-- Em -->
+![alt text](image-10.png)
+![alt text](image-11.png)
